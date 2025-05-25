@@ -1,0 +1,90 @@
+http:
+ #region routers 
+  routers:
+    jellyfin:
+      entryPoints:
+        - "https"
+      rule: "Host(`jellyfin.domain.com`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+      tls: {}
+      service: jellyfin   
+    pihole01:
+      entryPoints:
+        - "https"
+      rule: "Host(`pihole.domain.com`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+        #- pihole-redirectregex
+        #- pihole-addprefix
+      tls: {}
+      service: pihole01
+    pihole02:
+      entryPoints:
+        - "https"
+      rule: "Host(`pihole2.domain.com`)"
+      middlewares:
+        - default-headers
+        - https-redirectscheme
+        #- pihole-redirectregex
+        #- pihole-addprefix
+      tls: {}
+      service: pihole02
+
+#endregion
+#region services
+  services:
+    jellyfin:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.16:8096"
+        passHostHeader: true    
+    pihole01:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.16:80"
+        passHostHeader: true
+    pihole02:
+      loadBalancer:
+        servers:
+          - url: "http://192.168.1.17:80"
+        passHostHeader: true
+#endregion
+  middlewares:
+    https-redirectscheme:
+      redirectScheme:
+        scheme: https
+        permanent: true
+    pihole-addprefix:
+      addPrefix:
+        prefix: /admin
+    pihole-redirectregex:
+      redirectRegex:
+        regex: /admin/$
+        replacement: /
+    default-headers:
+      headers:
+        frameDeny:
+        sslRedirect: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+
+    default-whitelist:
+      ipAllowList:
+        sourceRange:
+        - "192.168.1.0/8"
+
+    secured:
+      chain:
+        middlewares:
+        - default-whitelist
+        - default-headers

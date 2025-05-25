@@ -1,0 +1,79 @@
+services:
+
+  traefik:
+    # The official v3 Traefik docker image
+    image: traefik:latest
+    container_name: ${TRAEFIK_CONTAINERNAME}
+    command:
+      # Enables the web UI and tells Traefik to listen to docker
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - proxy
+    ports:
+      # The HTTP port
+      - 80:80
+      # The Web UI (enabled by --api.insecure=true)
+      - ${TRAEFIK_WEBUI_PORT}:8080
+      - 443:443
+      - 9999:9999
+      # Postgres & Redis
+      - 5432:5432 # PostgreSQL port
+      - 6379:6379 # Redis port
+    environment:
+      #CF_DNS_API_TOKEN_FILE: /run/secrets/cf_api_token # note using _FILE for docker secrets
+      CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN} # if using .env
+      TRAEFIK_DASHBOARD_CREDENTIALS: ${TRAEFIK_DASHBOARD_CREDENTIALS}
+    dns:
+      - 10.18.82.7
+      - 10.18.82.17
+    secrets:
+      - cf_api_token
+    env_file: 
+      - ../.env  # Global env file
+      - .env     # Service-specific env file
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/data/traefik.yml:/traefik.yml:ro
+      - ./traefik/data/acme.json:/acme.json
+      - ./traefik/data/config.yml:/config.yml:ro
+      - /srv/traefik.log:/traefik.log
+    labels:
+      - homepage.name=${HOMEPAGE_TRAEFIK_NAME}
+      - homepage.description=${HOMEPAGE_TRAEFIK_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_TRAEFIK_GROUP}
+      - homepage.href=https://${TRAEFIK_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.icon=${HOMEPAGE_TRAEFIK_ICON}
+      - homepage.weight=${HOMEPAGE_TRAEFIK_WEIGHT}
+      - homepage.widget.type=${HOMEPAGE_TRAEFIK_WIDGET_TYPE}
+      - homepage.widget.url=https://${TRAEFIK_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.widget.username=${HOMEPAGE_TRAEFIK_WIDGET_USER}
+      - homepage.widget.password=${HOMEPAGE_TRAEFIK_WIDGET_PASSWORD}
+      - traefik.enable=true
+      - traefik.http.routers.traefik.entrypoints=http
+      - traefik.http.routers.traefik.rule=Host(`${TRAEFIK_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.middlewares.traefik-auth.basicauth.users=${TRAEFIK_DASHBOARD_CREDENTIALS}
+      - traefik.http.middlewares.traefik-https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
+      - traefik.http.routers.traefik.middlewares=traefik-https-redirect
+      - traefik.http.routers.traefik-secure.entrypoints=https
+      - traefik.http.routers.traefik-secure.rule=Host(`${TRAEFIK_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.traefik-secure.middlewares=traefik-auth
+      - traefik.http.routers.traefik-secure.tls=true
+      - traefik.http.routers.traefik-secure.tls.certresolver=cloudflare
+      - traefik.http.routers.traefik-secure.tls.domains[0].main=${DEFAULT_DOMAIN}
+      - traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DEFAULT_DOMAIN}
+      - traefik.http.routers.traefik-secure.service=api@internal
+
+secrets:
+  cf_api_token:
+    file: ./cf_api_token.txt
+
+networks:
+  proxy:
+    external: true
