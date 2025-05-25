@@ -28,9 +28,6 @@ services:
       #CF_DNS_API_TOKEN_FILE: /run/secrets/cf_api_token # note using _FILE for docker secrets
       CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN} # if using .env
       TRAEFIK_DASHBOARD_CREDENTIALS: ${TRAEFIK_DASHBOARD_CREDENTIALS}
-    dns:
-      - 10.18.82.7
-      - 10.18.82.17
     secrets:
       - cf_api_token
     env_file: 
