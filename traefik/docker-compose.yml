@@ -30,15 +30,15 @@ services:
       TRAEFIK_DASHBOARD_CREDENTIALS: ${TRAEFIK_DASHBOARD_CREDENTIALS}
     # secrets:
     #   - cf_api_token
-    env_file: 
+    env_file:
       - ../.env  # Global env file
       - .env     # Service-specific env file
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./traefik/data/traefik.yml:/traefik.yml:ro
-      - ./traefik/data/acme.json:/acme.json
-      - ./traefik/data/config.yml:/config.yml:ro
+      - ./data/traefik.yml:/traefik.yml:ro
+      - ./data/acme.json:/acme.json
+      - ./data/config.yml:/config.yml:ro
       - /srv/traefik.log:/traefik.log
     labels:
       - homepage.name=${HOMEPAGE_TRAEFIK_NAME}
@@ -67,9 +67,9 @@ services:
       - traefik.http.routers.traefik-secure.tls.domains[0].sans=*.${DEFAULT_DOMAIN}
       - traefik.http.routers.traefik-secure.service=api@internal
 
-secrets:
-  cf_api_token:
-    file: ./cf_api_token.txt
+#secrets:
+#  cf_api_token:
+#    file: ./cf_api_token.txt
 
 networks:
   proxy:
