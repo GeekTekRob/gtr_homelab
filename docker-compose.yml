@@ -1,5 +1,6 @@
 include:
   - traefik/docker-compose.yml
+  #- services/authentik/docker-compose.yml
   # - services/watchtower/docker-compose.yml
   # - services/wireguard/docker-compose.yml
   # - services/postgres/docker-compose.yml
@@ -13,8 +14,10 @@ include:
 #services:
 
 # volumes:
-#   postgres_data:
-#   redis_data:
+#   authentik_pg_data:
+#     driver: local
+#   authentik_redis:
+#     driver: local
 
 secrets:
   cf_api_token:
