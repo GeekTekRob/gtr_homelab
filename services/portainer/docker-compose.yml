@@ -44,3 +44,5 @@ networks:
 
 volumes:
   portainer_data:
+    name: ${PORTAINER_DATA}
+    external: true

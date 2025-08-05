@@ -1,23 +1,12 @@
 include:
   - traefik/docker-compose.yml
   - services/keycloak/docker-compose.yml
-  # - services/authentik/docker-compose.yml
-  # - services/watchtower/docker-compose.yml
-  # - services/wireguard/docker-compose.yml
-  # - services/postgres/docker-compose.yml
-  # - services/flyway/docker-compose.yml
-  # - services/pgbackups/docker-compose.yml
-  # - services/pgadmin/docker-compose.yml
-  # - services/redis/docker-compose.yml
-  # - services/freefilesync/docker-compose.yml
-  # - services/homepage/docker-compose.yml
+  - services/portainer/docker-compose.yml
 
 #services:
 
 # volumes:
-#   authentik_pg_data:
-#     driver: local
-#   authentik_redis:
+#   keycloak_pg_data:
 #     driver: local
 
 secrets:
