@@ -63,3 +63,7 @@
 # WIREGUARD
 /wireguard/.env
 /wireguard/wg-easy/
+
+# KEYCLOAK
+/services/keycloak/.env
+/services/keycloak/keycloak_pg_data/

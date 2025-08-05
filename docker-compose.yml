@@ -1,6 +1,7 @@
 include:
   - traefik/docker-compose.yml
-  #- services/authentik/docker-compose.yml
+  - services/keycloak/docker-compose.yml
+  # - services/authentik/docker-compose.yml
   # - services/watchtower/docker-compose.yml
   # - services/wireguard/docker-compose.yml
   # - services/postgres/docker-compose.yml

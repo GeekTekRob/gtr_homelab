@@ -21,9 +21,9 @@ services:
       - ${TRAEFIK_WEBUI_PORT}:8080
       - 443:443
       - 9999:9999
-      # Postgres & Redis
-      - 5432:5432 # PostgreSQL port
-      - 6379:6379 # Redis port
+      # # Postgres & Redis
+      # - 5432:5432 # PostgreSQL port
+      # - 6379:6379 # Redis port
     environment:
       #CF_DNS_API_TOKEN_FILE: /run/secrets/cf_api_token # note using _FILE for docker secrets
       CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN} # if using .env

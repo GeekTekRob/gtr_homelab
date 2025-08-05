@@ -1,0 +1,63 @@
+services:
+  keycloak-postgresql:
+    image: docker.io/library/postgres:16-alpine
+    container_name: ${KEYCLOAK_PG_CONTAINERNAME}
+    restart: unless-stopped
+    volumes:
+      - keycloak_pg_data:/var/lib/postgresql/data
+    env_file:
+      - ../../.env  # Global env file
+      - .env     # Service-specific env file
+    environment:
+      - POSTGRES_DB=${KEYCLOAK_PG_DB}
+      - POSTGRES_USER=${KEYCLOAK_PG_USER}
+      - POSTGRES_PASSWORD=${KEYCLOAK_PG_PASSWORD}
+    networks:
+      - proxy
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.1
+    container_name: ${KEYCLOAK_CONTAINERNAME}
+    restart: unless-stopped
+    command: 
+      - start-dev
+    env_file:
+      - ../../.env  # Global env file
+      - .env     # Service-specific env file
+    environment:
+      - KC_DB=postgres
+      - KC_DB_URL_HOST=${KEYCLOAK_PG_CONTAINERNAME}
+      - KC_DB_URL_DATABASE=${KEYCLOAK_PG_DB}
+      - KC_DB_USERNAME=${KEYCLOAK_PG_USER}
+      - KC_DB_PASSWORD=${KEYCLOAK_PG_PASSWORD}
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN_USER}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+      - KC_PROXY=edge
+      - KC_HOSTNAME=${KEYCLOAK_SUBDOMAIN}.${DEFAULT_DOMAIN}
+    ports:
+      - 8280:8080
+    depends_on:
+      - keycloak-postgresql
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.keycloak.rule=Host(`${KEYCLOAK_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.keycloak.entrypoints=https
+      - traefik.http.routers.keycloak.tls=true
+      - traefik.http.routers.keycloak.service=${KEYCLOAK_CONTAINERNAME}
+      - traefik.http.services.keycloak.loadbalancer.server.port=8080
+      - homepage.name=${HOMEPAGE_KEYCLOAK_NAME}
+      - homepage.description=${HOMEPAGE_KEYCLOAK_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_KEYCLOAK_GROUP}
+      - homepage.href=https://${KEYCLOAK_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.icon=${HOMEPAGE_KEYCLOAK_ICON}
+      - homepage.weight=${HOMEPAGE_KEYCLOAK_WEIGHT}
+    networks:
+      - proxy
+
+volumes:
+  keycloak_pg_data:
+    driver: local
+
+networks:
+  proxy:
+    external: true
