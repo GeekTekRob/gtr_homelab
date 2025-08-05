@@ -2,67 +2,21 @@
 .env
 */.env
 
-# AUDIOBOOKSHELF
-/audiobookshelf/config
-/audiobookshelf/metadata
-
-# AUTHENTIK
-/authentik/*
-/authentik/.env
-/authentik/certs
-/authentik/custom-templates
-/authentik/media
-
-# CALIBRE
-/calibre/.env
-/calibre/config
-
-# FREEFILESYNC
-/freefilesync/.env
-/freefilesync/app/*
-
-# HOMEPAGE
-/homepage/.env
-/homepage/config/logs
-
-#JELLYSEERR
-/jellyseerr/config
-
-# KAVITA-BOOKS
-/kavita-books/.env
-/kavita-books/data
-
-# KAVITA-COMICS
-/kavita-comics/.env
-/kavita-comics/data
-
 # PORTAINER
-/portainer/.env
+services/portainer/.env
+services/portainer/portainer_data/
 
 # POSTGRES
 /postgresql/backup/
 /postgresql/,env
 /postgresql/db
-/postgresql/pgadmin-data
-
-# REDIS
-/redis/.env
+/postgresql/pgadmin-data/
 
 # TRAEFIK
 /traefik/.env
 /traefik/data/traefik.yml
 /traefik/data/config.yml
 /traefik/data/acme.json
-
-# UPTIME-KUMA
-/uptime-kuma/data
-
-# WATCHTOWER
-/watchtower/.env
-
-# WIREGUARD
-/wireguard/.env
-/wireguard/wg-easy/
 
 # KEYCLOAK
 /services/keycloak/.env

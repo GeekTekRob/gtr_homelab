@@ -1,0 +1,46 @@
+services:
+
+ portainer:
+    image: portainer/${PORTAINER_VERSION}:latest
+    container_name: portainer
+    restart: always
+    command: -H unix:///var/run/docker.sock
+    env_file:
+      - ../../.env  # Global env file
+      - .env     # Service-specific env file
+    environment:
+      TZ: ${TIMEZONE}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    ports:
+      - ${PORTAINER_PORT1}:9000
+      - ${PORTAINER_PORT2}:8000
+    labels:
+      - homepage.name=${HOMEPAGE_PORTAINER_NAME}
+      - homepage.description=${HOMEPAGE_PORTAINER_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_PORTAINER_GROUP}
+      - homepage.href=https://portainer.${DEFAULT_DOMAIN}
+      - homepage.icon=${HOMEPAGE_PORTAINER_ICON}
+      - homepage.weight=${HOMEPAGE_PORTAINER_WEIGHT}
+      - homepage.widget.type=${HOMEPAGE_PORTAINER_WIDGET_TYPE}
+      - homepage.widget.url=https://portainer.${DEFAULT_DOMAIN}
+      - homepage.widget.env=${HOMEPAGE_PORTAINER_WIDGET_ENV}
+      - homepage.widget.key=${HOMEPAGE_PORTAINER_WIDGET_API_KEY}
+      - traefik.enable=true
+      - traefik.http.routers.portainer.rule=Host(`portainer.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.portainer.entrypoints=https
+      - traefik.http.routers.portainer.tls=true
+      - traefik.http.services.portainer.loadbalancer.server.port=9000
+      - traefik.http.routers.portainer.service=portainer
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
+
+volumes:
+  portainer_data:
