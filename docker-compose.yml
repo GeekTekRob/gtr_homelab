@@ -2,6 +2,7 @@ include:
   - traefik/docker-compose.yml
   - services/keycloak/docker-compose.yml
   - services/portainer/docker-compose.yml
+  - services/watchtower/docker-compose.yml
 
 #services:
 
