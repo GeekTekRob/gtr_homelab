@@ -1,0 +1,34 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    user: root
+    restart: unless-stopped
+    env_file:
+      - ../../.env  # Global env file
+      - .env     # Service-specific env file
+    ports:
+      - ${HOMEPAGE_PORT}:3000
+    environment:
+      PUID: ${HOMEPAGE_PUID}
+      PGID: ${HOMEPAGE_PGID}
+      HOMEPAGE_ALLOWED_HOSTS: ${HOMEPAGE_SUBDOMAIN}.${DEFAULT_DOMAIN}
+    volumes:
+      - ${HOMEPAGE_CONFIG_PATH}:/app/config # Make sure your local config directory exists
+      - ${DATA_DRIVE}:/var/data
+      - ${MEDIA_DRIVE}:/var/media
+      - ${MISC_DRIVE}:/var/misc
+      - ${HOMEPAGE_IMAGE_PATH}:/app/public/images
+      - /var/run/docker.sock:/var/run/docker.sock # pass local proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homepage.rule=Host(`${HOMEPAGE_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.homepage.entrypoints=https
+      - traefik.http.routers.homepage.tls=true
+      - traefik.http.services.homepage.loadbalancer.server.port=3000
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

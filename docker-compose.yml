@@ -3,6 +3,7 @@ include:
   - services/keycloak/docker-compose.yml
   - services/portainer/docker-compose.yml
   - services/watchtower/docker-compose.yml
+  - services/homepage/docker-compose.yml
 
 #services:
 

@@ -24,3 +24,8 @@ services/portainer/portainer_data/
 
 # WATCHTOWER
 /services/watchtower/.env
+
+# HOMEPAGE
+/services/homepage/.env
+/services/homepage/config/
+/services/homepage/images/

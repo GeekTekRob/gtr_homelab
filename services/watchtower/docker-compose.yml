@@ -10,6 +10,9 @@ services:
     ports:
       - ${WATCHTOWER_PORT}:8080
     restart: unless-stopped
+    env_file:
+      - ../../.env  # Global env file
+      - .env     # Service-specific env file
     environment:
       WATCHTOWER_DISABLE_CONTAINERS: "${WATCHTOWER_DISABLE_CONTAINERS}"
       WATCHTOWER_SCHEDULE: "0 0 1 * * *"
