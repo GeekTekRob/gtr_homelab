@@ -4,6 +4,8 @@ include:
   - services/portainer/docker-compose.yml
   - services/watchtower/docker-compose.yml
   - services/homepage/docker-compose.yml
+  - services/wireguard/docker-compose.yml
+  - services/freefilesync/docker-compose.yml
 
 #services:
 

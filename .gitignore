@@ -29,3 +29,11 @@ services/portainer/portainer_data/
 /services/homepage/.env
 /services/homepage/config/
 /services/homepage/images/
+
+# WIREGUARD
+/services/wireguard/.env
+/services/wireguard/wg-easy/
+
+# FREEFILESYNC
+/services/freefilesync/.env
+/services/freefilesync/app/

@@ -1,0 +1,35 @@
+services:
+  freefilesync:
+    container_name: ${FREEFILESYNC_CONTAINERNAME}
+    image: jlesage/freefilesync
+    restart: always
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TIMEZONE}
+    ports:
+      - ${FREEFILESYNC_PORT}:5800
+    volumes:
+      - /docker/appdata/freefilesync:/config:rw
+      - ${FREEFILESYNC_FILEPATH}:/storage:rw
+      - ${FREEFILESYNC_MEDIA}:/media:rw
+      - ${FREEFILESYNC_BACKUP}:/usbgd:rw
+      - ${FREEFILESYNC_BACKUP2}:/usbd:rw
+    labels:
+      - homepage.name=${HOMEPAGE_FREEFILESYNC_NAME}
+      - homepage.description=${HOMEPAGE_FREEFILESYNC_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_FREEFILESYNC_GROUP}
+      - homepage.href=https://${FREEFILESYNC_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.icon=${HOMEPAGE_FREEFILESYNC_ICON}
+      - homepage.weight=${HOMEPAGE_FREEFILESYNC_WEIGHT}
+      - traefik.enable=true
+      - traefik.http.routers.freefilesync.rule=Host(`${FREEFILESYNC_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.freefilesync.entrypoints=https
+      - traefik.http.routers.freefilesync.tls=true
+      - traefik.http.services.freefilesync.loadbalancer.server.port=5800
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
