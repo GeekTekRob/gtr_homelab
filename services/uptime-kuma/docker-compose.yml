@@ -1,0 +1,41 @@
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: ${KUMA_CONTAINER_NAME}
+    restart: unless-stopped
+    env_file:
+      - ../../.env  # Global env file
+      - .env       # Service-specific env file
+    ports:
+      - ${KUMA_PORT}:3001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ${KUMA_DATA_PATH}:/app/data
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      TZ: ${TIMEZONE}
+      PGID: ${KUMA_PGID}
+      PUID: ${KUMA_PUID}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.uptimekuma.rule=Host(`${KUMA_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.uptimekuma.entrypoints=https
+      - traefik.http.routers.uptimekuma.tls=true
+      - traefik.http.services.uptimekuma.loadbalancer.server.port=3001
+      - traefik.http.routers.navidrome.service=uptimekuma
+      - homepage.name=${HOMEPAGE_KUMA_NAME}
+      - homepage.description=${HOMEPAGE_KUMA_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_KUMA_GROUP}
+      - homepage.href=https://${KUMA_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.icon=${HOMEPAGE_KUMA_ICON}
+      - homepage.weight=${HOMEPAGE_KUMA_WEIGHT}
+      - homepage.widget.type=${HOMEPAGE_KUMA_WIDGET_TYPE}
+      - homepage.widget.url=https://${KUMA_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.widget.slug=${HOMEPAGE_KUMA_WIDGET_SLUG}      
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

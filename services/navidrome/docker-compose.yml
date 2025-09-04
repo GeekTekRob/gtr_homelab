@@ -1,0 +1,47 @@
+services:
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: ${NAVIDROME_CONTAINERNAME}
+    user: root
+    restart: unless-stopped
+    env_file:
+      - ../../.env  # Global env file
+      - .env       # Service-specific env file
+    ports:
+      - ${NAVIDROME_PORT}:4533
+    environment:
+      PUID: ${PGID}
+      PGID: ${PUID}
+      ND_SCANSCHEDULE: ${NAVIDROME_SCANSCHEDULE}
+      ND_REVERSEPROXYWHITELIST: ${NAVIDROME_WHITELIST}
+      ND_BASEURL: https://${NAVIDROME_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      ND_AGENTS: ${NAVIDROME_AGENTS}
+      ND_LASTFM_ENABLED	: ${NAVIDROME_LASTFM_ENABLED}
+      ND_LASTFM_APIKEY: ${NAVIDROME_LASTFM_APIKEY}
+      ND_LASTFM_SECRET: ${NAVIDROME_LASTFM_SECRET}
+    volumes:
+      - ${NAVIDROME_DATA_PATH}:/data
+      - ${NAVIDROME_MEDIA}/music:/music
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.navidrome.rule=Host(`${NAVIDROME_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.navidrome.entrypoints=https
+      - traefik.http.routers.navidrome.tls=true
+      - traefik.http.services.navidrome.loadbalancer.server.port=4533
+      - traefik.http.routers.navidrome.service=navidrome
+      - homepage.name=${HOMEPAGE_NAVIDROME_NAME}
+      - homepage.description=${HOMEPAGE_NAVIDROME_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_NAVIDROME_GROUP}
+      - homepage.href=https://${NAVIDROME_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.icon=${HOMEPAGE_NAVIDROME_ICON}
+      - homepage.weight=${HOMEPAGE_NAVIDROME_WEIGHT}
+      # - homepage.widget.type=${HOMEPAGE_NAVIDROME_WIDGET_TYPE}
+      # - homepage.widget.url=https://${NAVIDROME_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      # - homepage.widget.token=${NAVIDROME_API_TOKEN}
+      # - homepage.widget.salt=randomsalt
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

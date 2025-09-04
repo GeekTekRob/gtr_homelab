@@ -37,3 +37,16 @@ services/portainer/portainer_data/
 # FREEFILESYNC
 /services/freefilesync/.env
 /services/freefilesync/app/
+
+# UPTIME-KUMA
+/services/uptime-kuma/.env
+/services/uptime-kuma/data/
+
+# AUDIOBOOKSHELF
+/services/audiobookshelf/.env
+/services/audiobookshelf/config/
+/services/audiobookshelf/metadata/
+
+# NAVIDROME
+/services/navidrome/.env
+/services/navidrome/data/

@@ -1,0 +1,42 @@
+services:
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: ${AUDIOBOOKSHELF_CONTAINERNAME}
+    user: root
+    restart: unless-stopped
+    env_file:
+      - ../../.env  # Global env file
+      - .env       # Service-specific env file
+    ports:
+      - ${AUDIOBOOKSHELF_PORT}:80
+    environment:
+      PUID: ${AUDIOBOOKSHELF_PUID}
+      PGID: ${AUDIOBOOKSHELF_PGID}
+      TZ: ${TIMEZONE}
+      AUDIOBOOKSHELF_BASEURL: https://${AUDIOBOOKSHELF_SUBDOMAIN}.${DEFAULT_DOMAIN}
+    volumes:
+      - ${AUDIOBOOKSHELF_AUDIOBOOK_PATH}:/audiobooks
+      - ${AUDIOBOOKSHELF_PODCAST_PATH}:/podcasts
+      - ${AUDIOBOOKSHELF_CONFIG_PATH}:/config
+      - ${AUDIOBOOKSHELF_METADATA_PATH}:/metadata
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.audiobookshelf.rule=Host(`${AUDIOBOOKSHELF_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.audiobookshelf.entrypoints=https
+      - traefik.http.routers.audiobookshelf.tls=true
+      - traefik.http.services.audiobookshelf.loadbalancer.server.port=80
+      - homepage.name=${HOMEPAGE_NAME}
+      - homepage.description=${HOMEPAGE_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_GROUP}
+      - homepage.href=https://${AUDIOBOOKSHELF_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.icon=${HOMEPAGE_ICON}
+      - homepage.weight=${HOMEPAGE_WEIGHT}
+      - homepage.widget.type=${HOMEPAGE_WIDGET_TYPE}
+      - homepage.widget.url=https://${AUDIOBOOKSHELF_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.widget.key=${HOMEPAGE_WIDGET_API_KEY}
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true
