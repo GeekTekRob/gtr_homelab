@@ -42,6 +42,12 @@ services/portainer/portainer_data/
 /services/uptime-kuma/.env
 /services/uptime-kuma/data/
 
+#  N8N
+/services/n8n/.env
+/services/n8n/data/
+/services/n8n/files/
+/services/n8n/postgres-data/
+
 # AUDIOBOOKSHELF
 /services/audiobookshelf/.env
 /services/audiobookshelf/config/

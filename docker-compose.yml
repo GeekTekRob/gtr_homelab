@@ -7,6 +7,7 @@ include:
   - services/wireguard/docker-compose.yml
   - services/freefilesync/docker-compose.yml
   - services/uptime-kuma/docker-compose.yml
+  - services/n8n/docker-compose.yml
   - services/navidrome/docker-compose.yml
   - services/audiobookshelf/docker-compose.yml
   
