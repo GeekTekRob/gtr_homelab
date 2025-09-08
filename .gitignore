@@ -34,6 +34,9 @@ services/portainer/portainer_data/
 /services/wireguard/.env
 /services/wireguard/wg-easy/
 
+# REDIS
+/services/redis/.env
+
 # FREEFILESYNC
 /services/freefilesync/.env
 /services/freefilesync/app/

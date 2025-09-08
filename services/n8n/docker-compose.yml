@@ -15,6 +15,7 @@ services:
       - N8N_RUNNERS_ENABLED=true
       - NODE_ENV=${n8n_ENVIROMENT}
       - WEBHOOK_URL=https://${n8n_SUBDOMAIN}.${DEFAULT_DOMAIN}/
+      - N8N_PROXY_HOPS=${n8n_PROXY_HOPS}
       - GENERIC_TIMEZONE=${TIMEZONE}
       - TZ=${TIMEZONE}
       - PGID=0

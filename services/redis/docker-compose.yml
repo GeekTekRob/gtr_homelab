@@ -1,0 +1,44 @@
+services:
+  redis:
+    image: redis:7.0-alpine
+    container_name: ${REDIS_CONTAINERNAME}
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    env_file:
+      - ../../.env  # Global env file
+      - .env        # Service-specific env file
+    ports:
+      - "${REDIS_PORT}:6379"
+    environment:
+      - TZ=${TIMEZONE}
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD}"]
+    volumes:
+      - redis_data:/data
+    labels:
+      - traefik.enable=true"
+      # routers
+      - traefik.tcp.routers.redis.rule=HostSNI(`*`)
+      - traefik.tcp.routers.redis.entryPoints=redis
+      - traefik.tcp.routers.redis.service=redis
+      # services (needed for TCP)
+      - traefik.tcp.services.redis.loadbalancer.server.port=6379    
+      - homepage.name=${HOMEPAGE_REDIS_NAME}
+      - homepage.description=${HOMEPAGE_REDIS_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_REDIS_GROUP}
+      - homepage.href=redis://${REDIS_CONTAINERNAME}:${REDIS_PORT}
+      - homepage.icon=${HOMEPAGE_REDIS_ICON}
+      - homepage.weight=${HOMEPAGE_REDIS_WEIGHT}
+
+    networks:
+      - proxy
+
+volumes:
+  redis_data:
+    name: ${REDIS_DATA_VOLUME}
+    driver: local
+
+networks:
+  proxy:
+    external: true

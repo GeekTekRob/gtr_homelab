@@ -5,6 +5,7 @@ include:
   - services/watchtower/docker-compose.yml
   - services/homepage/docker-compose.yml
   - services/wireguard/docker-compose.yml
+  - services/redis/docker-compose.yml
   - services/freefilesync/docker-compose.yml
   - services/uptime-kuma/docker-compose.yml
   - services/n8n/docker-compose.yml
