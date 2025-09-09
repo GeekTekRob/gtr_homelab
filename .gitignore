@@ -37,6 +37,9 @@ services/portainer/portainer_data/
 # REDIS
 /services/redis/.env
 
+# POSTGRES
+/services/postgres/.env
+
 # FREEFILESYNC
 /services/freefilesync/.env
 /services/freefilesync/app/

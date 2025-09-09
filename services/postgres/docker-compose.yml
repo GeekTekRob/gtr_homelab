@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:17.6
+    container_name: ${POSTGRES_CONTAINERNAME}
+    restart: unless-stopped
+    env_file:
+      - ../../.env  # Global env file
+      - .env        # Service-specific env file
+    ports:
+      - ${POSTGRES_PORT}:5432
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=${TIMEZONE}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    labels:
+      - traefik.enable=true
+      - traefik.tcp.routers.postgres.rule=HostSNI(`${POSTGRES_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.tcp.routers.postgres.entryPoints=postgres
+      - traefik.tcp.routers.postgres.service=postgres
+      - traefik.tcp.services.postgres.loadbalancer.server.port=5432
+      - homepage.name=${HOMEPAGE_POSTGRES_NAME}
+      - homepage.description=${HOMEPAGE_POSTGRES_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_POSTGRES_GROUP}
+      - homepage.href=postgres://${POSTGRES_CONTAINERNAME}:${POSTGRES_PORT}
+      - homepage.icon=${HOMEPAGE_POSTGRES_ICON}
+      - homepage.weight=${HOMEPAGE_POSTGRES_WEIGHT}
+    networks:
+      - proxy
+
+volumes:
+  postgres_data:
+    name: ${POSTGRES_DATA_VOLUME}
+    driver: local
+
+networks:
+  proxy:
+    external: true

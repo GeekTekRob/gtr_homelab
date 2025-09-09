@@ -23,8 +23,9 @@ services:
     volumes:
       - ${n8n_DATA_PATH}:/home/node/.n8n
       - ${n8n_FILES_PATH}:/files
+      - ${n8n_DOWNLOADS_PATH}:/downloads
     depends_on:
-      - postgres
+      - n8n-postgres
     labels:
       - traefik.enable=true
       - traefik.http.routers.n8n.rule=Host(`${n8n_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
@@ -40,8 +41,7 @@ services:
     networks:
       - proxy
 
-  # If you're running your own external PostgreSQL instance, you can comment out this service
-  postgres:
+  n8n-postgres:
     image: postgres:15
     container_name: ${n8n_CONTAINER_NAME}-postgres
     restart: always
