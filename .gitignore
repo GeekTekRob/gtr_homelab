@@ -62,3 +62,8 @@ services/portainer/portainer_data/
 # NAVIDROME
 /services/navidrome/.env
 /services/navidrome/data/
+ 
+# OLLAMA
+/services/ollama/.env
+/services/ollama/ollama_data/
+/services/ollama/open-webui-data/

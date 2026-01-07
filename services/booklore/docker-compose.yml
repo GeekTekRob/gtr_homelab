@@ -1,0 +1,73 @@
+services:
+  booklore:
+    image: booklore/booklore:latest
+    container_name: ${BOOKLORE_CONTAINERNAME}
+    user: root
+    restart: unless-stopped
+    env_file:
+      - ../../.env  # Global env file
+      - .env       # Service-specific env file
+    ports:
+      - ${BOOKLORE_PORT}:${BOOKLORE_PORT}
+    environment:
+      PUID: 114
+      PGID: 101
+      TZ: ${TIMEZONE}
+      DATABASE_URL: jdbc:mariadb://${BOOKLORE_MARIADB_CONTAINERNAME}:3306/${BOOKLORE_DB_NAME}
+      DATABASE_USERNAME: root
+      DATABASE_PASSWORD: ${BOOKLORE_MARIADB_ROOT_PASSWORD}
+      BOOKLORE_PORT: ${BOOKLORE_PORT}
+      BOOKLORE_BASEURL: https://${BOOKLORE_SUBDOMAIN}.${DEFAULT_DOMAIN}
+    depends_on:
+      booklore-mariadb:
+        condition: service_healthy
+    volumes:
+      - ${BOOKLORE_DATA_PATH}:/app/data
+      - ${BOOKLORE_BOOKS_PATH}:/books
+      - ${BOOKLORE_BOOKDROP_PATH}:/bookdrop
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.booklore.rule=Host(`${BOOKLORE_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.booklore.entrypoints=https
+      - traefik.http.routers.booklore.tls=true
+      - traefik.http.services.booklore.loadbalancer.server.port=${BOOKLORE_PORT}
+      - traefik.http.routers.booklore.service=booklore      
+      - homepage.name=${HOMEPAGE_BOOKLORE_NAME}
+      - homepage.description=${HOMEPAGE_BOOKLORE_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_BOOKLORE_GROUP}
+      - homepage.href=https://${BOOKLORE_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.icon=${HOMEPAGE_BOOKLORE_ICON}
+      - homepage.weight=${HOMEPAGE_BOOKLORE_WEIGHT}
+    networks:
+      - proxy
+
+  booklore-mariadb:
+    image: lscr.io/linuxserver/mariadb:11.4.5
+    container_name: ${BOOKLORE_MARIADB_CONTAINERNAME}
+    env_file:
+      - ../../.env  # Global env file
+      - .env       # Service-specific env file
+    environment:
+      - PUID=0
+      - PGID=0
+      - TZ=${TIMEZONE}
+      - MYSQL_ROOT_PASSWORD=${BOOKLORE_MARIADB_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${BOOKLORE_DB_NAME}
+      - MYSQL_USER=${BOOKLORE_DB_USER}
+      - MYSQL_PASSWORD=${BOOKLORE_DB_PASSWORD}
+    ports:
+      - 3306:3306
+    volumes:
+      - ${BOOKLORE_MARIADB_CONFIG_PATH}:/config     
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mariadb-admin", "ping", "-h", "localhost" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

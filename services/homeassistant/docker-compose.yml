@@ -1,0 +1,40 @@
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    container_name: homeassistant
+    user: root
+    restart: unless-stopped
+    env_file:
+      - ../../.env  # Global env file
+      - .env       # Service-specific env file
+    ports:
+      - ${HOMEASSISTANT_PORT}:8123
+    environment:
+      - TZ=${TIMEZONE}
+      - PUID=${HOMEASSISTANT_PUID}
+      - PGID=${HOMEASSISTANT_PGID}
+    volumes:
+      - ${HOMEASSISTANT_CONFIG_PATH}:/config
+      - /etc/localtime:/etc/localtime:ro
+      - ${DATA_DRIVE}:/var/data
+    # Optional devices for Z-Wave/Zigbee USB sticks. Uncomment or add as needed.
+    # devices:
+    #   - /dev/ttyUSB0:/dev/ttyUSB0
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homeassistant.rule=Host(`${HOMEASSISTANT_SUBDOMAIN}.${DEFAULT_DOMAIN}`)
+      - traefik.http.routers.homeassistant.entrypoints=https
+      - traefik.http.routers.homeassistant.tls=true
+      - traefik.http.routers.homeassistant.service=homeassistant
+      - traefik.http.services.homeassistant.loadbalancer.server.port=8123
+      - homepage.name=${HOMEPAGE_HOMEASSISTANT_NAME}
+      - homepage.description=${HOMEPAGE_HOMEASSISTANT_DESCRIPTION}
+      - homepage.group=${HOMEPAGE_HOMEASSISTANT_GROUP}
+      - homepage.href=https://${HOMEASSISTANT_SUBDOMAIN}.${DEFAULT_DOMAIN}
+      - homepage.icon=${HOMEPAGE_HOMEASSISTANT_ICON}
+    networks:
+      - proxy
+
+networks:
+  proxy:
+    external: true

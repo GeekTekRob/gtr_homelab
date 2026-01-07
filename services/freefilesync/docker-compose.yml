@@ -15,6 +15,7 @@ services:
       - ${FREEFILESYNC_MEDIA}:/media:rw
       - ${FREEFILESYNC_BACKUP}:/usbgd:rw
       - ${FREEFILESYNC_BACKUP2}:/usbd:rw
+      - ${FREEFILESYNC_BACKUP3}:/usbxd:rw
     labels:
       - homepage.name=${HOMEPAGE_FREEFILESYNC_NAME}
       - homepage.description=${HOMEPAGE_FREEFILESYNC_DESCRIPTION}

@@ -12,6 +12,8 @@ include:
   - services/n8n/docker-compose.yml
   - services/navidrome/docker-compose.yml
   - services/audiobookshelf/docker-compose.yml
+  - services/homeassistant/docker-compose.yml
+  - services/booklore/docker-compose.yml
   
 
 #services:

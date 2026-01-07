@@ -39,6 +39,7 @@ services:
       - ./data/traefik.yml:/traefik.yml:ro
       - ./data/acme.json:/acme.json
       - ./data/config.yml:/config.yml:ro
+      - ./data/certs:/etc/certs:ro
       - /srv/traefik.log:/traefik.log
     labels:
       - homepage.name=${HOMEPAGE_TRAEFIK_NAME}
