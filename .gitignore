@@ -67,3 +67,12 @@ services/portainer/portainer_data/
 /services/ollama/.env
 /services/ollama/ollama_data/
 /services/ollama/open-webui-data/
+
+# BOOKLORE
+/services/booklore/.env
+/services/booklore/data/
+/services/booklore/mariadb/
+
+# HOMEASSISTANT
+/services/homeassistant/.env
+/services/homeassistant/config/
