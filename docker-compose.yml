@@ -1,5 +1,6 @@
 include:
   - traefik/docker-compose.yml
+  - services/cloudflared/docker-compose.yml
   - services/keycloak/docker-compose.yml
   - services/portainer/docker-compose.yml
   - services/watchtower/docker-compose.yml
@@ -14,7 +15,6 @@ include:
   - services/audiobookshelf/docker-compose.yml
   - services/homeassistant/docker-compose.yml
   - services/booklore/docker-compose.yml
-  
 
 #services:
 

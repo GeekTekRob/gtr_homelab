@@ -1,0 +1,19 @@
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: ${CLOUDFLARED_CONTAINERNAME}
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    env_file:
+      - ../../.env
+      - .env
+    networks:
+      - proxy
+    volumes:
+      - ${CLOUDFLARED_DATA_PATH}:/etc/cloudflared
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARED_TUNNEL_TOKEN}
+
+networks:
+  proxy:
+    external: true
